@@ -1,13 +1,15 @@
-﻿open Parsec
+﻿open System
+
+open Parsec
 open TextInput
-open System
+open JSONParser
 
 [<EntryPoint>]
 let main argv = 
     
     let print result = 
         match result with
-        | Failure(e,n,p) -> printfn "%s" e
+        | Failure(e,n,p) -> printfn "%s in %s" e n
         | Success (r,_) -> printfn "%s" (r.ToString())
 
     let unwrap r input =
@@ -33,6 +35,18 @@ let main argv =
     let parseAA = pstring "aa"
     let input = fromString  inpStr;
     let result = run parseAA input
+    print result
+
+    let input = fromString "null";
+    let result = run pNull input
+    print result
+
+    let input = fromString "true";
+    let result = run pBool input
+    print result
+
+    let input = fromString "false";
+    let result = run pBool input
     print result
 
     Console.ReadLine() |> ignore

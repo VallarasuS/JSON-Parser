@@ -27,7 +27,10 @@ let bind f p =
             Success((f a), i)
         | Failure(e, n, p) ->
             Failure(e,n,p)
+
     { parse = fn; name = "unknown" } 
+
+let (|>>) x f = bind f x
 
 let ndt p1 p2 =
     let fn input =
@@ -39,7 +42,21 @@ let ndt p1 p2 =
             Failure(e,n,p) 
         | Failure(e,n,p) ->
             Failure(e,n,p) 
+
     { parse = fn; name = "unknown" }
+
+let (|&>) = ndt
+
+let orelse p1 p2 =
+    let fn input =
+        match (run p1 input) with
+        | Success (a, i) -> Success (a, i)
+        | Failure (_,_,_) ->
+            run p2 input
+
+    { parse = fn; name = "unknown" }
+
+let (<|>) = orelse
 
 let returnp x =
     let fn input =
@@ -75,6 +92,17 @@ let satisfy predicate label =
                 let e = sprintf "unexpected %c" c
                 Failure(e, label, postionFromInput input)
     { parse = fn; name = label }
+
+let setLabel p l =
+    let fn input = 
+        match (run p input) with
+        | Success (a, i) ->
+            Success(a, i)
+        | Failure(e, n, p) ->
+            Failure(e,l,p)
+    { parse = fn; name = l }
+    
+let (|?>) = setLabel 
 
 // **************** CHAR PARSERS **************** 
 
