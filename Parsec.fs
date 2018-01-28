@@ -1,0 +1,104 @@
+﻿module Parsec
+
+open TextInput
+open System
+
+type ParserName = string
+type ParserError = string
+
+type Result<'a> =
+    | Success of 'a
+    | Failure of  ParserError * ParserName * Position
+
+type Parser<'a> = {
+    parse : (Input -> Result<'a * Input>)
+    name : ParserName
+}
+
+let run p input =
+    p.parse input
+
+// **************** Combinators **************** 
+
+let bind f p =
+    let fn input = 
+        match (run p input) with
+        | Success (a, i) ->
+            Success((f a), i)
+        | Failure(e, n, p) ->
+            Failure(e,n,p)
+    { parse = fn; name = "unknown" } 
+
+let ndt p1 p2 =
+    let fn input =
+        match (run p1 input) with
+        | Success (a, i) ->
+          match (run p2 i) with
+          | Success (r, inew) -> Success( (a,r), inew)
+          | Failure(e,n,p) ->
+            Failure(e,n,p) 
+        | Failure(e,n,p) ->
+            Failure(e,n,p) 
+    { parse = fn; name = "unknown" }
+
+let returnp x =
+    let fn input =
+        Success (x, input)
+    { parse = fn; name = "unknown" }
+
+let (<*>) fp xp =
+   ndt fp xp 
+   |> bind (fun (f,x) -> f x)
+
+let lift f xp yp =
+    returnp f <*> xp <*> yp
+
+let rec reducer plist =
+    let cons h t = h::t
+    let consp = lift cons // TODO
+
+    match plist with
+    | [] -> returnp []
+    | h::t -> consp h (reducer t)
+
+// **************** Helpers **************** 
+
+let satisfy predicate label =
+    let fn input =
+        let remaining, c = nextChar input
+        match c with
+        | None -> Failure("End of String", label, TextInput.postionFromInput input)
+        | Some c -> 
+            if predicate c then
+                Success(c, remaining)
+            else
+                let e = sprintf "unexpected %c" c
+                Failure(e, label, postionFromInput input)
+    { parse = fn; name = label }
+
+// **************** CHAR PARSERS **************** 
+
+let pchar c = 
+    let predicate ch = (ch = c)
+    let label = sprintf "%c" c
+    satisfy predicate label
+    
+let digitChar =
+    let predicate = Char.IsDigit
+    let label = "digit"
+    satisfy predicate label
+
+let whitespaceChar =
+    let predicate = Char.IsWhiteSpace
+    let label = "whitespace"
+    satisfy predicate label
+
+// **************** STRING PARSERS **************** 
+
+let pstring str = 
+    str
+    |> Seq.toList
+    |> List.map pchar
+    |> reducer
+    |> bind (fun l -> String(List.toArray l))
+
