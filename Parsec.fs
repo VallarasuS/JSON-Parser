@@ -48,7 +48,7 @@ let rec zeroOrMore p input acc =
     let r = run p input
     match r with
     | Failure(e,n,p) -> 
-        (acc, input)
+        (acc |> List.rev, input)
     | Success(a, i) ->
         zeroOrMore p i (a :: acc)
 

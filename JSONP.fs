@@ -64,3 +64,13 @@ let punicodeChar =
         Int32.Parse(str, Globalization.NumberStyles.HexNumber) |> char
         
     backslash >>. uChar >>. hexdigit .>>. hexdigit .>>. hexdigit .>>. hexdigit |?> "unicode char" |>> toChar
+
+let quotedString =
+    let quote = pchar '\"' 
+    let jchar = pUnescapedChar <|> pescapedChar <|> punicodeChar
+
+    quote >>. many jchar .>> quote |?> "quoted string" |>> (fun r -> String(List.toArray r))
+    
+let jstring =
+    quotedString |?> "quoted string"
+

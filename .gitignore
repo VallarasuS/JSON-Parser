@@ -5,3 +5,5 @@
 /.vs/JSON.Parser/v14
 /bin/Debug
 /obj/Debug
+/.vs
+/obj/Release

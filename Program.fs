@@ -46,44 +46,58 @@ let main argv =
 
 // **************** TEST pNull **************** 
     
-    let input = fromString "null";
+    let input = fromString "null"
     let result = run pNull input
     print result
 
 // **************** TEST pBool **************** 
 
-    let input = fromString "true";
+    let input = fromString "true"
     let result = run pBool input
     print result
 
-    let input = fromString "false";
+    let input = fromString "false"
     let result = run pBool input
     print result
 
 // **************** TEST pUnescapedChar **************** 
 
-    let input = fromString "somestring";
+    let input = fromString "somestring"
     let result = run pUnescapedChar input
     print result
 
-    let input = fromString "\"somestring";
+    let input = fromString "\"somestring"
     let result = run pUnescapedChar input
     print result
 
 // **************** TEST pescapedChar **************** 
 
-    let input = fromString "somestring";
+    let input = fromString "somestring"
     let result = run pescapedChar input
     print result
 
-    let input = fromString "\\b somestring";
+    let input = fromString "\\b somestring"
     let result = run pescapedChar input
     print result
 
 // **************** TEST punicodeChar **************** 
 
-    let input = fromString "\\u263A";
+    let input = fromString "\\u263A"
     let result = run punicodeChar input
+    print result
+
+    // **************** TEST jstring **************** 
+
+    let i = fromString "\"a\""
+    let ri = run jstring i
+    print ri
+
+    let input = fromString "\"ab\\tde\"" 
+    let result = run jstring input
+    print result
+
+    let input = fromString "\"ab\\u263Ade\""
+    let result = run jstring input
     print result
 
     Console.ReadLine() |> ignore
