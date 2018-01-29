@@ -15,8 +15,42 @@ type Parser<'a> = {
     name : ParserName
 }
 
+// **************** Helpers **************** 
+
 let run p input =
     p.parse input
+
+let satisfy predicate label =
+    let fn input =
+        let remaining, c = nextChar input
+        match c with
+        | None -> Failure("End of String", label, TextInput.postionFromInput input)
+        | Some c -> 
+            if predicate c then
+                Success(c, remaining)
+            else
+                let e = sprintf "unexpected %c" c
+                Failure(e, label, postionFromInput input)
+    { parse = fn; name = label }
+
+let setLabel p l =
+    let fn input = 
+        match (run p input) with
+        | Success (a, i) ->
+            Success(a, i)
+        | Failure(e, n, p) ->
+            Failure(e,l,p)
+    { parse = fn; name = l }
+    
+let (|?>) = setLabel 
+
+let rec zeroOrMore p input acc = 
+    let r = run p input
+    match r with
+    | Failure(e,n,p) -> 
+        (acc, input)
+    | Success(a, i) ->
+        zeroOrMore p i (a :: acc)
 
 // **************** Combinators **************** 
 
@@ -72,7 +106,7 @@ let lift f xp yp =
 
 let rec reducer plist =
     let cons h t = h::t
-    let consp = lift cons // TODO
+    let consp = lift cons
 
     match plist with
     | [] -> returnp []
@@ -89,31 +123,10 @@ let (>>.) p1 p2 =
 let btw p1 p2 p3 =
     p1 >>. p2 .>> p3
 
-// **************** Helpers **************** 
-
-let satisfy predicate label =
+let many p =
     let fn input =
-        let remaining, c = nextChar input
-        match c with
-        | None -> Failure("End of String", label, TextInput.postionFromInput input)
-        | Some c -> 
-            if predicate c then
-                Success(c, remaining)
-            else
-                let e = sprintf "unexpected %c" c
-                Failure(e, label, postionFromInput input)
-    { parse = fn; name = label }
-
-let setLabel p l =
-    let fn input = 
-        match (run p input) with
-        | Success (a, i) ->
-            Success(a, i)
-        | Failure(e, n, p) ->
-            Failure(e,l,p)
-    { parse = fn; name = l }
-    
-let (|?>) = setLabel 
+        Success(zeroOrMore p input [])
+    { parse = fn; name = "unknown" }
 
 // **************** CHAR PARSERS **************** 
 

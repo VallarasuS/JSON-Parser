@@ -36,7 +36,16 @@ let main argv =
     let input = fromString  inpStr;
     let result = run parseAA input
     print result
+    
+// **************** TEST pstring **************** 
 
+    let parseA1 = parseA |> many |>> (fun c -> String(Seq.toArray c))
+    let input = fromString  inpStr
+    let result = run parseA1 input
+    print result
+
+// **************** TEST pNull **************** 
+    
     let input = fromString "null";
     let result = run pNull input
     print result
