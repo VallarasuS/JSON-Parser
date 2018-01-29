@@ -45,7 +45,7 @@ let ndt p1 p2 =
 
     { parse = fn; name = "unknown" }
 
-let (|&>) = ndt
+let (.>>.) = ndt
 
 let orelse p1 p2 =
     let fn input =
@@ -77,6 +77,17 @@ let rec reducer plist =
     match plist with
     | [] -> returnp []
     | h::t -> consp h (reducer t)
+
+let (.>>) p1 p2 =
+    p1 .>>. p2
+    |>> (fun (a,b) -> a)
+
+let (>>.) p1 p2 =
+    p1 .>>. p2
+    |>> (fun (a,b) -> b)
+
+let btw p1 p2 p3 =
+    p1 >>. p2 .>> p3
 
 // **************** Helpers **************** 
 
@@ -120,6 +131,11 @@ let whitespaceChar =
     let predicate = Char.IsWhiteSpace
     let label = "whitespace"
     satisfy predicate label
+
+let anyof plist =
+    plist 
+    |> List.map pchar 
+    |> List.reduce orelse
 
 // **************** STRING PARSERS **************** 
 

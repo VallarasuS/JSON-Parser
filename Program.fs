@@ -41,12 +41,40 @@ let main argv =
     let result = run pNull input
     print result
 
+// **************** TEST pBool **************** 
+
     let input = fromString "true";
     let result = run pBool input
     print result
 
     let input = fromString "false";
     let result = run pBool input
+    print result
+
+// **************** TEST pUnescapedChar **************** 
+
+    let input = fromString "somestring";
+    let result = run pUnescapedChar input
+    print result
+
+    let input = fromString "\"somestring";
+    let result = run pUnescapedChar input
+    print result
+
+// **************** TEST pescapedChar **************** 
+
+    let input = fromString "somestring";
+    let result = run pescapedChar input
+    print result
+
+    let input = fromString "\\b somestring";
+    let result = run pescapedChar input
+    print result
+
+// **************** TEST punicodeChar **************** 
+
+    let input = fromString "\\u263A";
+    let result = run punicodeChar input
     print result
 
     Console.ReadLine() |> ignore
