@@ -68,7 +68,6 @@ let createParseForwardRefTo<'a>() =
 
     wrapper, parserRef
 
-
 // **************** Combinators **************** 
 
 let bind f p =

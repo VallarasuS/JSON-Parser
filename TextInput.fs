@@ -33,7 +33,7 @@ let incrCol position =
     { position with col = position.col + 1 }
  
 let incrLine position = 
-    { position with line = position.line + 1 }   
+    { position with line = position.line + 1; col = 0 }   
 
 let nextChar input =
     let line = input.position.line

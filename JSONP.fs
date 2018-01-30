@@ -119,10 +119,10 @@ let spaces =
 let pjvalue, pjvalueRef = createParseForwardRefTo<JValue>()
 
 let pArray = 
-    let left = pchar '[' .>> spaces
-    let right = pchar ']' .>> spaces
-    let comma = pchar ',' .>> spaces
-    let value = pjvalue .>> spaces
+    let left = pchar '[' .>> spaces .>> pescapedChar
+    let right = pchar ']' .>> spaces .>> pescapedChar
+    let comma = pchar ',' .>> spaces .>> pescapedChar
+    let value = pjvalue .>> spaces .>> pescapedChar
     let values = sepBy value comma
 
     (btw left values right) |>> JArray |?> "array"
@@ -130,17 +130,17 @@ let pArray =
 // **************** pObject ****************
 
 let pObject =
-    let left = pchar '{' .>> spaces
-    let right = pchar '}' .>> spaces
-    let colon = pchar ':' .>> spaces
-    let comma = pchar ',' .>> spaces
-    let key = quotedString .>> spaces
-    let value = pjvalue .>> spaces
+    let left = pchar '{' .>> spaces .>> pescapedChar
+    let right = pchar '}' .>> spaces .>> pescapedChar
+    let colon = pchar ':' .>> spaces .>> pescapedChar
+    let comma = pchar ',' .>> spaces .>> pescapedChar
+    let key = quotedString .>> spaces .>> pescapedChar
+    let value = pjvalue .>> spaces .>> pescapedChar
 
     let keyvalue = (key .>> colon) .>>. value
     let keyvalues = sepBy keyvalue comma
 
-    btw left keyvalues right |>> Map.ofList |>> JObject |?> "object parser" 
+    (btw left keyvalues right) |>> Map.ofList |>> JObject |?> "object parser" 
 
 pjvalueRef := any  
     [ 

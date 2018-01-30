@@ -153,7 +153,7 @@ let main argv =
 
 // **************** finally TEST comple parser **************** 
 
-    let input = fromString "{ \"name\" : \"Vallarasu\", \"gender\" : \"male\", \"bday\" : {\"year\":2001, \"month\":12, \"day\":25 }, \"favouriteColors\" : [\"blue\", \"green\"], \"IsEmployed\" : true}"
+    let input = fromString "{ \"glossary\": { \"title\": \"example glossary\", \"GlossDiv\": { \"title\": \"S\", \"GlossList\": { \"GlossEntry\": { \"ID\": \"SGML\", \"SortAs\": \"SGML\", \"GlossTerm\": \"Standard Generalized Markup Language\", \"Acronym\": \"SGML\", \"Abbrev\": \"ISO 8879:1986\", \"GlossDef\": { \"para\": \"A meta-markup language, used to create markup languages such as DocBook.\", \"GlossSeeAlso\": [\"GML\", \"XML\"] }, \"GlossSee\": \"markup\" } } } } }"
     let result = run pjvalue input
     print result
 
