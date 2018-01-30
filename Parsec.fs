@@ -128,6 +128,9 @@ let many p =
         Success(zeroOrMore p input [])
     { parse = fn; name = "unknown" }
 
+let optional p = 
+    (p |>> Some) <|> returnp None
+
 // **************** CHAR PARSERS **************** 
 
 let pchar c = 
@@ -135,12 +138,12 @@ let pchar c =
     let label = sprintf "%c" c
     satisfy predicate label
     
-let digitChar =
+let pdigitChar =
     let predicate = Char.IsDigit
     let label = "digit"
     satisfy predicate label
 
-let whitespaceChar =
+let pwhitespaceChar =
     let predicate = Char.IsWhiteSpace
     let label = "whitespace"
     satisfy predicate label

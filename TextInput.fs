@@ -43,7 +43,7 @@ let nextChar input =
         input, None
     else
         let currentLine = currentLine input
-        if (col <= currentLine.Length) then
+        if (col < currentLine.Length) then
             let c = currentLine.[col]
             let newPos = incrCol input.position
             let newState = { input with position = newPos }

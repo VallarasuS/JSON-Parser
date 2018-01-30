@@ -9,8 +9,17 @@ let main argv =
     
     let print result = 
         match result with
-        | Failure(e,n,p) -> printfn "%s in %s" e n
-        | Success (r,_) -> printfn "%s" (r.ToString())
+        | Failure(e,n,p) -> printfn "Error   : %s in %s" e n
+        | Success (r,_) -> 
+            match box r with
+            | :? JValue as v ->
+                match v with
+                | JString s -> printfn  "Success : JString %s" s
+                | JNumber f -> printfn "Success : JNumber %f" f
+                | JBool b -> printfn "Success : JBool %b" b
+                | JNull -> printfn "Success : JNull"
+                | _ -> printfn "Success : JValue %s" (v.ToString())
+            | _ -> printfn "Success : %s" (r.ToString())
 
     let unwrap r input =
         match r with
@@ -86,18 +95,36 @@ let main argv =
     let result = run punicodeChar input
     print result
 
-    // **************** TEST jstring **************** 
+// **************** TEST pjstring **************** 
 
     let i = fromString "\"a\""
-    let ri = run jstring i
+    let ri = run pjstring i
     print ri
 
     let input = fromString "\"ab\\tde\"" 
-    let result = run jstring input
+    let result = run pjstring input
     print result
 
     let input = fromString "\"ab\\u263Ade\""
-    let result = run jstring input
+    let result = run pjstring input
+    print result
+
+// **************** TEST pNumber **************** 
+
+    let input = fromString "-123"
+    let result = run pNumber input
+    print result
+
+    let input = fromString "123"
+    let result = run pNumber input
+    print result
+
+    let input = fromString "123.123e3"
+    let result = run pNumber input
+    print result
+
+    let input = fromString "123.123e-3"
+    let result = run pNumber input
     print result
 
     Console.ReadLine() |> ignore
