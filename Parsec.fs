@@ -52,6 +52,23 @@ let rec zeroOrMore p input acc =
     | Success(a, i) ->
         zeroOrMore p i (a :: acc)
 
+let createParseForwardRefTo<'a>() =
+    
+    let fakeParser =
+        let fn input : Result<'a * Input> = 
+            failwith "not implemented"
+        { parse = fn; name = "fake" }
+
+    let parserRef = ref fakeParser
+
+    let fn input =
+        run !parserRef input
+
+    let wrapper = { parse = fn; name = "fake wrapper" }
+
+    wrapper, parserRef
+
+
 // **************** Combinators **************** 
 
 let bind f p =
@@ -131,6 +148,9 @@ let many p =
 let optional p = 
     (p |>> Some) <|> returnp None
 
+let many1 p =
+    p .>>. (many p) |>> (fun (a,al) -> a::al)
+
 // **************** CHAR PARSERS **************** 
 
 let pchar c = 
@@ -152,6 +172,15 @@ let anyof plist =
     plist 
     |> List.map pchar 
     |> List.reduce orelse
+
+let any plist =
+    plist
+    |> List.reduce orelse
+
+let sepBy p sep =
+    let septhenP = sep >>. p
+    p .>>. many septhenP |>> (fun (a, alist) -> a :: alist )
+
 
 // **************** STRING PARSERS **************** 
 

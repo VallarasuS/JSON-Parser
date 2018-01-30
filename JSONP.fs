@@ -102,7 +102,7 @@ let positive = pchar '+' |?> "sign"
 
 let zero = pstring "0" |?> "zero"
 
-let digits = many pdigitChar |>> (fun c -> String(List.toArray c)) |?> "digits"
+let digits = many1 pdigitChar |>> (fun c -> String(List.toArray c)) |?> "digits"
 
 let fraction = pchar '.' >>. digits |?> "fraction"
 
@@ -110,3 +110,44 @@ let exponent = (pchar 'e' <|> pchar 'E') >>. optional ( negative <|> positive ) 
 
 let pNumber =
     optional negative .>>.  (zero <|> digits) .>>. (optional fraction) .>>. (optional exponent) |?> "Number" |>> toJNumber
+
+// **************** pArray ****************
+
+let spaces =
+    many pwhitespaceChar
+
+let pjvalue, pjvalueRef = createParseForwardRefTo<JValue>()
+
+let pArray = 
+    let left = pchar '[' .>> spaces
+    let right = pchar ']' .>> spaces
+    let comma = pchar ',' .>> spaces
+    let value = pjvalue .>> spaces
+    let values = sepBy value comma
+
+    (btw left values right) |>> JArray |?> "array"
+
+// **************** pObject ****************
+
+let pObject =
+    let left = pchar '{' .>> spaces
+    let right = pchar '}' .>> spaces
+    let colon = pchar ':' .>> spaces
+    let comma = pchar ',' .>> spaces
+    let key = quotedString .>> spaces
+    let value = pjvalue .>> spaces
+
+    let keyvalue = (key .>> colon) .>>. value
+    let keyvalues = sepBy keyvalue comma
+
+    btw left keyvalues right |>> Map.ofList |>> JObject |?> "object parser" 
+
+pjvalueRef := any  
+    [ 
+    pNull
+    pBool
+    pNumber 
+    pjstring
+    pArray
+    pObject
+    ]

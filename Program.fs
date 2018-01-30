@@ -6,26 +6,37 @@ open JSONParser
 
 [<EntryPoint>]
 let main argv = 
+
+    let rec printl jv =
+        match jv with
+        | JString s -> printfn  "   JString %s" s
+        | JNumber f -> printfn "    JNumber %f" f
+        | JBool b -> printfn "  JBool %b" b
+        | JNull -> printfn "    JNull"
+        | JArray al -> 
+            match al with
+            | h::t 
+                -> printl h; printl (JArray t)
+            | _ -> printfn "end of array"
+        | JObject m ->
+            let k =  m |> Map.toList
+            match k with
+            | (key,value)::t -> printfn "%s" key; printl value; printl (JObject (t |> Map.ofList))
+            | _ -> printfn "end of map"
     
     let print result = 
         match result with
         | Failure(e,n,p) -> printfn "Error   : %s in %s" e n
         | Success (r,_) -> 
             match box r with
-            | :? JValue as v ->
-                match v with
-                | JString s -> printfn  "Success : JString %s" s
-                | JNumber f -> printfn "Success : JNumber %f" f
-                | JBool b -> printfn "Success : JBool %b" b
-                | JNull -> printfn "Success : JNull"
-                | _ -> printfn "Success : JValue %s" (v.ToString())
+            | :? JValue as v -> printl v
             | _ -> printfn "Success : %s" (r.ToString())
 
     let unwrap r input =
         match r with
         | Success(a,i) -> i
         | Failure(e,n, p) -> { input with position = p }
-
+(*
 // **************** TEST pchar **************** 
 
     let inpStr = "aabcde..f2344"
@@ -125,6 +136,25 @@ let main argv =
 
     let input = fromString "123.123e-3"
     let result = run pNumber input
+    print result
+
+// **************** TEST pArray **************** 
+
+    let input = fromString "[1, 2, 3]"
+    let result = run pArray input
+    print result
+
+// **************** TEST pObject **************** 
+
+    let input = fromString "{ \"a\" : 1, \"b\":2 }"
+    let result = run pObject input
+    print result
+*)
+
+// **************** finally TEST comple parser **************** 
+
+    let input = fromString "{ \"name\" : \"Vallarasu\", \"gender\" : \"male\", \"bday\" : {\"year\":2001, \"month\":12, \"day\":25 }, \"favouriteColors\" : [\"blue\", \"green\"], \"IsEmployed\" : true}"
+    let result = run pjvalue input
     print result
 
     Console.ReadLine() |> ignore
