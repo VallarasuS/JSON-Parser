@@ -63,6 +63,7 @@
     <Content Include="App.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="Tests.fsx" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />

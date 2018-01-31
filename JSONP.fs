@@ -119,10 +119,10 @@ let spaces =
 let pjvalue, pjvalueRef = createParseForwardRefTo<JValue>()
 
 let pArray = 
-    let left = pchar '[' .>> spaces .>> pescapedChar
-    let right = pchar ']' .>> spaces .>> pescapedChar
-    let comma = pchar ',' .>> spaces .>> pescapedChar
-    let value = pjvalue .>> spaces .>> pescapedChar
+    let left = pchar '[' .>> spaces .>> many pescapedChar
+    let right = pchar ']' .>> spaces .>> many pescapedChar
+    let comma = pchar ',' .>> spaces .>> many pescapedChar
+    let value = pjvalue .>> spaces .>> many pescapedChar
     let values = sepBy value comma
 
     (btw left values right) |>> JArray |?> "array"
@@ -130,12 +130,12 @@ let pArray =
 // **************** pObject ****************
 
 let pObject =
-    let left = pchar '{' .>> spaces .>> pescapedChar
-    let right = pchar '}' .>> spaces .>> pescapedChar
-    let colon = pchar ':' .>> spaces .>> pescapedChar
-    let comma = pchar ',' .>> spaces .>> pescapedChar
-    let key = quotedString .>> spaces .>> pescapedChar
-    let value = pjvalue .>> spaces .>> pescapedChar
+    let left = pchar '{' .>> spaces .>> many pescapedChar
+    let right = pchar '}' .>> spaces .>> many pescapedChar
+    let colon = pchar ':' .>> spaces .>> many pescapedChar
+    let comma = pchar ',' .>> spaces .>> many pescapedChar
+    let key = quotedString .>> spaces .>> many pescapedChar
+    let value = pjvalue .>> spaces .>> many pescapedChar
 
     let keyvalue = (key .>> colon) .>>. value
     let keyvalues = sepBy keyvalue comma

@@ -36,126 +36,183 @@ let main argv =
         match r with
         | Success(a,i) -> i
         | Failure(e,n, p) -> { input with position = p }
-(*
-// **************** TEST pchar **************** 
 
-    let inpStr = "aabcde..f2344"
+// --------------------------------------------------------------------------------
+//                             finally TEST complete parser 
+// --------------------------------------------------------------------------------
 
-    let parseA = pchar 'a'
-    let input = fromString  inpStr;
-    let result = run parseA input
-    print result
+    printfn "--------------------------------------------------------"
 
-    let i = unwrap result input
-    let result1 = run parseA i
-    print result1
+    fromString "{
+                            \"glossary\": {
+                                \"title\": \"example glossary\",
+                                \"GlossDiv\": {
+                                    \"title\": \"S\",
+                                    \"GlossList\": {
+                                        \"GlossEntry\": {
+                                            \"ID\": \"SGML\",
+                                            \"SortAs\": \"SGML\",
+                                            \"GlossTerm\": \"Standard Generalized Markup Language\",
+                                            \"Acronym\": \"SGML\",
+                                            \"Abbrev\": \"ISO 8879:1986\",
+                                            \"GlossDef\": {
+                                                \"para\": \"A meta-markup language, used to create markup languages such as DocBook.\",
+                                                \"GlossSeeAlso\": [\"GML\", \"XML\"]
+                                            },
+                                            \"GlossSee\": \"markup\"
+                                        }
+                                    }
+                                }
+                            }
+                        }"
 
-// **************** TEST pstring **************** 
+    |> run pjvalue 
+    |> print
 
-    let parseAA = pstring "aa"
-    let input = fromString  inpStr;
-    let result = run parseAA input
-    print result
-    
-// **************** TEST pstring **************** 
+    printfn "--------------------------------------------------------"
 
-    let parseA1 = parseA |> many |>> (fun c -> String(Seq.toArray c))
-    let input = fromString  inpStr
-    let result = run parseA1 input
-    print result
+    fromString "{\"menu\": {
+                  \"id\": \"file\",
+                  \"value\": \"File\",
+                  \"popup\": {
+                    \"menuitem\": [
+                      {\"value\": \"New\", \"onclick\": \"CreateNewDoc()\"},
+                      {\"value\": \"Open\", \"onclick\": \"OpenDoc()\"},
+                      {\"value\": \"Close\", \"onclick\": \"CloseDoc()\"}
+                    ]
+                  }
+                }}"
 
-// **************** TEST pNull **************** 
-    
-    let input = fromString "null"
-    let result = run pNull input
-    print result
+    |> run pjvalue 
+    |> print
 
-// **************** TEST pBool **************** 
+    printfn "--------------------------------------------------------"
 
-    let input = fromString "true"
-    let result = run pBool input
-    print result
+    fromString "{\"widget\": {
+                    \"debug\": \"on\",
+                    \"window\": {
+                        \"title\": \"Sample Konfabulator Widget\",
+                        \"name\": \"main_window\",
+                        \"width\": 500,
+                        \"height\": 500
+                    },
+                    \"image\": { 
+                        \"src\": \"Images/Sun.png\",
+                        \"name\": \"sun1\",
+                        \"hOffset\": 250,
+                        \"vOffset\": 250,
+                        \"alignment\": \"center\"
+                    },
+                    \"text\": {
+                        \"data\": \"Click Here\",
+                        \"size\": 36,
+                        \"style\": \"bold\",
+                        \"name\": \"text1\",
+                        \"hOffset\": 250,
+                        \"vOffset\": 100,
+                        \"alignment\": \"center\",
+                        \"onMouseUp\": \"sun1.opacity = (sun1.opacity / 100) * 90;\"
+                    }
+                }}    "
 
-    let input = fromString "false"
-    let result = run pBool input
-    print result
+    |> run pjvalue 
+    |> print
 
-// **************** TEST pUnescapedChar **************** 
+    printfn "--------------------------------------------------------"
 
-    let input = fromString "somestring"
-    let result = run pUnescapedChar input
-    print result
+    fromString "{\"web-app\": {
+                          \"servlet\": [   
+                            {
+                              \"servlet-name\": \"cofaxCDS\",
+                              \"servlet-class\": \"org.cofax.cds.CDSServlet\",
+                              \"init-param\": {
+                                \"configGlossary:installationAt\": \"Philadelphia, PA\",
+                                \"configGlossary:adminEmail\": \"ksm@pobox.com\",
+                                \"configGlossary:poweredBy\": \"Cofax\",
+                                \"configGlossary:poweredByIcon\": \"/images/cofax.gif\",
+                                \"configGlossary:staticPath\": \"/content/static\",
+                                \"templateProcessorClass\": \"org.cofax.WysiwygTemplate\",
+                                \"templateLoaderClass\": \"org.cofax.FilesTemplateLoader\",
+                                \"templatePath\": \"templates\",
+                                \"templateOverridePath\": \"\",
+                                \"defaultListTemplate\": \"listTemplate.htm\",
+                                \"defaultFileTemplate\": \"articleTemplate.htm\",
+                                \"useJSP\": false,
+                                \"jspListTemplate\": \"listTemplate.jsp\",
+                                \"jspFileTemplate\": \"articleTemplate.jsp\",
+                                \"cachePackageTagsTrack\": 200,
+                                \"cachePackageTagsStore\": 200,
+                                \"cachePackageTagsRefresh\": 60,
+                                \"cacheTemplatesTrack\": 100,
+                                \"cacheTemplatesStore\": 50,
+                                \"cacheTemplatesRefresh\": 15,
+                                \"cachePagesTrack\": 200,
+                                \"cachePagesStore\": 100,
+                                \"cachePagesRefresh\": 10,
+                                \"cachePagesDirtyRead\": 10,
+                                \"searchEngineListTemplate\": \"forSearchEnginesList.htm\",
+                                \"searchEngineFileTemplate\": \"forSearchEngines.htm\",
+                                \"searchEngineRobotsDb\": \"WEB-INF/robots.db\",
+                                \"useDataStore\": true,
+                                \"dataStoreClass\": \"org.cofax.SqlDataStore\",
+                                \"redirectionClass\": \"org.cofax.SqlRedirection\",
+                                \"dataStoreName\": \"cofax\",
+                                \"dataStoreDriver\": \"com.microsoft.jdbc.sqlserver.SQLServerDriver\",
+                                \"dataStoreUrl\": \"jdbc:microsoft:sqlserver://LOCALHOST:1433;DatabaseName=goon\",
+                                \"dataStoreUser\": \"sa\",
+                                \"dataStorePassword\": \"dataStoreTestQuery\",
+                                \"dataStoreTestQuery\": \"SET NOCOUNT ON;select test='test';\",
+                                \"dataStoreLogFile\": \"/usr/local/tomcat/logs/datastore.log\",
+                                \"dataStoreInitConns\": 10,
+                                \"dataStoreMaxConns\": 100,
+                                \"dataStoreConnUsageLimit\": 100,
+                                \"dataStoreLogLevel\": \"debug\",
+                                \"maxUrlLength\": 500}},
+                            {
+                              \"servlet-name\": \"cofaxEmail\",
+                              \"servlet-class\": \"org.cofax.cds.EmailServlet\",
+                              \"init-param\": {
+                              \"mailHost\": \"mail1\",
+                              \"mailHostOverride\": \"mail2\"}},
+                            {
+                              \"servlet-name\": \"cofaxAdmin\",
+                              \"servlet-class\": \"org.cofax.cds.AdminServlet\"},
+ 
+                            {
+                              \"servlet-name\": \"fileServlet\",
+                              \"servlet-class\": \"org.cofax.cds.FileServlet\"},
+                            {
+                              \"servlet-name\": \"cofaxTools\",
+                              \"servlet-class\": \"org.cofax.cms.CofaxToolsServlet\",
+                              \"init-param\": {
+                                \"templatePath\": \"toolstemplates/\",
+                                \"log\": 1,
+                                \"logLocation\": \"/usr/local/tomcat/logs/CofaxTools.log\",
+                                \"logMaxSize\": \"\",
+                                \"dataLog\": 1,
+                                \"dataLogLocation\": \"/usr/local/tomcat/logs/dataLog.log\",
+                                \"dataLogMaxSize\": \"\",
+                                \"removePageCache\": \"/content/admin/remove?cache=pages&id=\",
+                                \"removeTemplateCache\": \"/content/admin/remove?cache=templates&id=\",
+                                \"fileTransferFolder\": \"/usr/local/tomcat/webapps/content/fileTransferFolder\",
+                                \"lookInContext\": 1,
+                                \"adminGroupID\": 4,
+                                \"betaServer\": true}}],
+                          \"servlet-mapping\": {
+                            \"cofaxCDS\": \"/\",
+                            \"cofaxEmail\": \"/cofaxutil/aemail/*\",
+                            \"cofaxAdmin\": \"/admin/*\",
+                            \"fileServlet\": \"/static/*\",
+                            \"cofaxTools\": \"/tools/*\"},
+ 
+                          \"taglib\": {
+                            \"taglib-uri\": \"cofax.tld\",
+                            \"taglib-location\": \"/WEB-INF/tlds/cofax.tld\"}}}"
 
-    let input = fromString "\"somestring"
-    let result = run pUnescapedChar input
-    print result
+    |> run pjvalue 
+    |> print
 
-// **************** TEST pescapedChar **************** 
-
-    let input = fromString "somestring"
-    let result = run pescapedChar input
-    print result
-
-    let input = fromString "\\b somestring"
-    let result = run pescapedChar input
-    print result
-
-// **************** TEST punicodeChar **************** 
-
-    let input = fromString "\\u263A"
-    let result = run punicodeChar input
-    print result
-
-// **************** TEST pjstring **************** 
-
-    let i = fromString "\"a\""
-    let ri = run pjstring i
-    print ri
-
-    let input = fromString "\"ab\\tde\"" 
-    let result = run pjstring input
-    print result
-
-    let input = fromString "\"ab\\u263Ade\""
-    let result = run pjstring input
-    print result
-
-// **************** TEST pNumber **************** 
-
-    let input = fromString "-123"
-    let result = run pNumber input
-    print result
-
-    let input = fromString "123"
-    let result = run pNumber input
-    print result
-
-    let input = fromString "123.123e3"
-    let result = run pNumber input
-    print result
-
-    let input = fromString "123.123e-3"
-    let result = run pNumber input
-    print result
-
-// **************** TEST pArray **************** 
-
-    let input = fromString "[1, 2, 3]"
-    let result = run pArray input
-    print result
-
-// **************** TEST pObject **************** 
-
-    let input = fromString "{ \"a\" : 1, \"b\":2 }"
-    let result = run pObject input
-    print result
-*)
-
-// **************** finally TEST comple parser **************** 
-
-    let input = fromString "{ \"glossary\": { \"title\": \"example glossary\", \"GlossDiv\": { \"title\": \"S\", \"GlossList\": { \"GlossEntry\": { \"ID\": \"SGML\", \"SortAs\": \"SGML\", \"GlossTerm\": \"Standard Generalized Markup Language\", \"Acronym\": \"SGML\", \"Abbrev\": \"ISO 8879:1986\", \"GlossDef\": { \"para\": \"A meta-markup language, used to create markup languages such as DocBook.\", \"GlossSeeAlso\": [\"GML\", \"XML\"] }, \"GlossSee\": \"markup\" } } } } }"
-    let result = run pjvalue input
-    print result
+    printfn "--------------------------------------------------------"
 
     Console.ReadLine() |> ignore
 
