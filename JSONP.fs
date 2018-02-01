@@ -102,7 +102,7 @@ let positive = pchar '+' |?> "sign"
 
 let zero = pstring "0" |?> "zero"
 
-let digits = many1 pdigitChar |>> (fun c -> String(List.toArray c)) |?> "digits"
+let digits = many1 digit |>> (fun c -> String(List.toArray c)) |?> "digits"
 
 let fraction = pchar '.' >>. digits |?> "fraction"
 

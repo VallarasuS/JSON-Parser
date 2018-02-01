@@ -157,7 +157,7 @@ let pchar c =
     let label = sprintf "%c" c
     satisfy predicate label
     
-let pdigitChar =
+let digit =
     let predicate = Char.IsDigit
     let label = "digit"
     satisfy predicate label
