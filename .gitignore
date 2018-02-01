@@ -3,7 +3,7 @@
 ################################################################################
 
 /.vs/JSON.Parser/v14
-/bin/Debug
-/obj/Debug
-/.vs
-/obj/Release
+src/bin/Debug
+src/obj/Debug
+src/obj/Release
+src/.vs
