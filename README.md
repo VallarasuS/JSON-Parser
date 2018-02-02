@@ -35,9 +35,9 @@ A limited necessary set of combinators (chaining and piping parsers) are include
 
 `p1 .>>. p2`	- Applies p1 and p2 in sequence, and returns a tuple with results of p1 and p2.
 
-`p1 >>. p2`	- Applies p1 and p2 in sequence, and returns resul of p2.
+`p1 >>. p2`	- Applies p1 and p2 in sequence, and returns result of p2.
 
-`p1 .>> p2`	- Applies p1 and p2 in sequence, and returns resul of p1.
+`p1 .>> p2`	- Applies p1 and p2 in sequence, and returns result of p1.
 
 `p1 <|> p2`	- Applies p1, p2 in sequence, and returns on succeess. Proceeds with p2 only when p1 fails.
 
