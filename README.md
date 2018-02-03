@@ -45,6 +45,22 @@ A limited necessary set of combinators (chaining and piping parsers) are include
 
 `btw p1 p2 p3`	- Applies p1, p2 and p3 in sequence, and returns result of p2.
 
+## Usage
 
+A number in JSON has the following parts as descrbed [here](http://json.org)
+
+* An optional sign char (-)
+* A Zero or Digit [1-9] (+ many of them) 
+* An optional fraction (.)[1-9]+
+* An exponent [eE] (+/-) [1-9]+
+
+It takes individual `pchar` to parse each item given in specification and combining them in order to parse a number
+
+```fsharp
+
+let pNumber =
+    optional negative .>>.  (zero <|> digits) .>>. (optional fraction) .>>. (optional exponent)
+
+```
 
 Source of inspiration [Scott Wlaschin](https://fsharpforfunandprofit.com/posts/understanding-parser-combinators/) and [Stephan Tolksdorf](https://github.com/stephan-tolksdorf/fparsec).
