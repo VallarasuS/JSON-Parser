@@ -47,7 +47,7 @@ A limited necessary set of combinators (chaining and piping parsers) are include
 
 ## Usage
 
-A number in JSON has the following parts as descrbed [here](http://json.org)
+A number in JSON has the following parts as described [here](http://json.org)
 
 * An optional sign char (-)
 * A Zero or Digit [1-9] (+ many of them) 
